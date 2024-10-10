@@ -14,7 +14,6 @@ left_scoreboard = ScoreBoard(-100, left_score)
 right_scoreboard = ScoreBoard(100, right_score)
 
 
-
 ball = Ball()
 screen.tracer(0)
 screen.setup(width=600, height=600, startx=0, starty=0)
