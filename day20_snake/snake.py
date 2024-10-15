@@ -19,7 +19,7 @@ class Snake:
     def snake_creation(self, position):
         for snake_pos in range(3):
             self.snake_part_creation(0)
-            self.snake[snake_pos].goto(position[snake_pos])  # teleport does not work with tuple :/
+            self.snake[snake_pos].goto(position[snake_pos])
 
     def add_snake_part(self):
         self.snake_part_creation(1)
@@ -34,10 +34,24 @@ class Snake:
     def move(self):
         sleep(0.1)
         for part in range(len(self.snake) - 1, 0, -1):  # len = 3-1, so 2, 1
-            self.snake[-part - 1].teleport(x=self.snake[-part].xcor(), y=self.snake[-part].ycor())
+            self.snake[-part - 1].goto(x=self.snake[-part].xcor(), y=self.snake[-part].ycor())
         self.snake[-1].forward(20)
 
     def collision_with_tail(self):
         for snake_part in self.snake:
             if self.head.distance(snake_part) < 15 and self.head != snake_part:
                 return True
+
+    def restart(self):
+        for part in range(len(self.snake)):  # len = 3-1, so 2, 1
+            self.snake[part].goto(1000, 1000)  # teleport the old
+            # snake off_screen
+        self.snake.clear()
+        self.snake_creation(SNAKEPART_POS)
+        self.head = self.snake[-1]
+
+    def stop_moving(self):  # more like go where it was
+        for part in range(len(self.snake) - 1, 0, -1):
+            self.snake[-part - 1].goto(x=self.snake[-part].xcor(), y=self.snake[-part].ycor())
+        self.snake[-1].forward(-20)
+
