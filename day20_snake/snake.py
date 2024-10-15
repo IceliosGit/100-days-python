@@ -9,6 +9,10 @@ class Snake:
         self.snake = []
         self.snake_creation(SNAKEPART_POS)
         self.head = self.snake[-1]
+        self.allowed_to_move = True
+
+    def set_move(self, val_bool):
+        self.allowed_to_move = val_bool
 
     def snake_part_creation(self, order):
         snake_part = Turtle("square")
@@ -49,9 +53,3 @@ class Snake:
         self.snake.clear()
         self.snake_creation(SNAKEPART_POS)
         self.head = self.snake[-1]
-
-    def stop_moving(self):  # more like go where it was
-        for part in range(len(self.snake) - 1, 0, -1):
-            self.snake[-part - 1].goto(x=self.snake[-part].xcor(), y=self.snake[-part].ycor())
-        self.snake[-1].forward(-20)
-

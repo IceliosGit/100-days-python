@@ -10,6 +10,7 @@ def restart():
     snake.restart()
     game_over.restart()
     score.reset()
+    snake.set_move(True)
 
 
 def leave_game():
@@ -41,12 +42,13 @@ screen.onkey(leave_game, "Escape")
 path = './save_score.txt'
 game_on = True
 while game_on:
-    snake.move()
+    print(snake.allowed_to_move)
+    if snake.allowed_to_move:
+        snake.move()
     # food and scored
     if os.path.isfile(path):  # check if there is already a game save, if yes, put highscore
         with open("save_score.txt", mode="r") as file:
             score.highscore_counter = int(file.read())
-            print(score.highscore_counter)
         score.highscore_write()
 
     if snake.head.distance(food) < 15:  # check detection with food
@@ -66,7 +68,7 @@ while game_on:
             or snake.head.xcor() > 280 or snake.head.xcor() < -280:
         screen.onkey(restart, "r")
         game_over.game_over_write()
-        snake.stop_moving()
+        snake.set_move(False)  # toggle_move allowed_to_move = False
         screen.update()
 
 quit()
