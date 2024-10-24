@@ -20,7 +20,6 @@ while number_guessed < 50:
     answer_state = answer_state.title()  # Put the first letter in uppercase if not already the case
     # title() will put every single word with an uppercase first. capitalized will only do the first word
     if answer_state == "Exit":
-
         df = pandas.DataFrame(state_list)
         df.to_csv("List_of_missed_states.csv")
         break
