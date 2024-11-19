@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import messagebox
 from password_generator import password_generator
 import pyperclip
+import json
+
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
@@ -11,6 +13,25 @@ def generate_p():
     password_entry.delete(0, END)
     password_entry.insert(0, generated_password)
     pyperclip.copy(generated_password)
+
+
+# ---------------------------- PASSWORD RECUPERATION ------------------------------- #
+
+
+def password_recuperation():
+    try:
+        df = open("password.json", "r")
+        data = json.load(df)
+        email_dict = data.get(website_entry.get(), {}).get("email")
+        if email_dict is None:
+            raise FileNotFoundError
+        messagebox.showinfo(title=website_entry.get(),
+                            message=f'email address: {data[website_entry.get()]["email"]}\n'
+                                    f'password:{data.get(website_entry.get(), {}).get("password")}')
+    except FileNotFoundError:
+        messagebox.showinfo(title=website_entry.get(), message=f"You don't have registered an email and password "
+                                                               f"for: {website_entry.get()}")
+
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
@@ -23,13 +44,30 @@ def save():
                                        message=f'Do you wish to save for\n'
                                                f'This website: "{website_entry.get()}" \n'
                                                f'This password: "{password_entry.get()}"?')
+        new_data = {
+            website_entry.get(): {
+                "email": email_entry.get(),
+                "password": password_entry.get()
+            }
+        }
+
         if is_ok:
-            f = open("password.txt", "a")
-            f.write(f'{website_entry.get()} | {email_entry.get()} | {password_entry.get()}\n')
-            f.close()
-            website_entry.delete(0, END)
-            password_entry.delete(0, END)
-            website_entry.focus()
+            try:
+                # reding old data:
+                df = open("password.json", "r")
+                newer_data = json.load(df)
+                # update data
+                newer_data.update(new_data)
+            except FileNotFoundError as error:
+                df = open("password.json", "w")
+                json.dump(new_data, df, indent=4)
+            else:
+                # write new data:
+                df = open("password.json", "w")
+                json.dump(newer_data, df, indent=4)
+                website_entry.delete(0, END)
+                password_entry.delete(0, END)
+                website_entry.focus()
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -62,9 +100,12 @@ generate_button.grid(column=2, row=3, sticky="w")
 add_button = Button(text="add", width=43, command=save)
 add_button.grid(column=1, row=4, columnspan=2, sticky="w")
 
+search_button = Button(text="search", width=14, command=password_recuperation)
+search_button.grid(column=2, row=1, sticky="w")
+
 # Entry
-website_entry = Entry(width=51)
-website_entry.grid(column=1, row=1, columnspan=2, sticky="w")
+website_entry = Entry(width=32)
+website_entry.grid(column=1, row=1, sticky="w")
 website_entry.focus()
 
 email_entry = Entry(width=51)

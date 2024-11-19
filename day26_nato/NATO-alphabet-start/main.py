@@ -8,8 +8,15 @@ for (index, row) in nato_df.iterrows():  # need to call index, won't work otherw
 print(nato_dict)
 
 # Create a list of the phonetic code words from a word that the user inputs:
-user_input = input("Enter a word:")
-nato_list_user = [nato_dict[letter.upper()] for letter in list(user_input)]
+loop = True
+while loop:
+    user_input = input("Enter a word:")
+
+    try:
+        nato_list_user = [nato_dict[letter.upper()] for letter in list(user_input)]
+        loop = False
+    except KeyError:
+        print("Only letter please")
 print(nato_list_user)
 
 
